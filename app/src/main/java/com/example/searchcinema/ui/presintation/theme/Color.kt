@@ -1,4 +1,4 @@
-package com.example.searchcinema.ui.theme
+package com.example.searchcinema.ui.presintation.theme
 
 import androidx.compose.ui.graphics.Color
 
