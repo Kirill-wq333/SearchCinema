@@ -35,10 +35,12 @@ fun Cinema(
     film: Film,
     onClick: () -> Unit
 ) {
+    val parts = film.releaseDate.split("-")
+
     CinemaItem(
-        cinema = film.film,
-        date = film.year,
-        image = film.imageUrl,
+        cinema = film.title,
+        date = parts[0],
+        image = film.pictureUrl,
         onClick = onClick
     )
 }
@@ -48,7 +50,7 @@ fun CinemaItem(
     cinema: String,
     image: String,
     onClick: () -> Unit,
-    date: Int
+    date: String
 ) {
     val gradient = Brush.linearGradient(
         listOf(Color.Black.copy(0f), Color.Black.copy(0.3f))

@@ -22,10 +22,12 @@ lifecycleViewmodelKtx = "2.6.2"
 composeNavigation = "2.9.0"
 kotlinxCoroutinesAndroid = "1.7.3"
 retrofit = "2.9.0"
+mytrackerSdk = "3.0.12"
 loggingInterceptor = "4.12.0"
 converterGson = "2.9.0"
 
 [libraries]
+mytracker-sdk = { module = "com.my.tracker:mytracker-sdk", version.ref = "mytrackerSdk" }
 
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltNavigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }

@@ -43,6 +43,8 @@ android {
 
 dependencies {
 
+    implementation (libs.mytracker.sdk)
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 

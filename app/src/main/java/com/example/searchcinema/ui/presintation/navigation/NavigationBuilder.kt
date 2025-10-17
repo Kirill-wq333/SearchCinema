@@ -28,11 +28,14 @@ fun NavigationBuilder(
         composable(route = AppRouts.DISCOVER) {
             DiscoverScreen(
                 films = Mock.demoFilms,
-                openDetailScreen = { navController.navigate(AppRouts.DETAIL) }
+                openDetailScreen = { id ->
+                    navController.navigate("${AppRouts.DETAIL}/${id}")
+                }
             )
         }
 
-        composable(route = AppRouts.DETAIL) {
+        composable(route = AppRouts.DETAIL) { backStackEntry ->
+            val movieId = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
 
         }
 

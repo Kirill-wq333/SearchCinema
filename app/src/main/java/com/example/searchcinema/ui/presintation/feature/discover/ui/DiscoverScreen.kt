@@ -62,7 +62,7 @@ private fun DiscoverScreenPreview() {
 
 @Composable
 fun DiscoverScreen(
-    openDetailScreen: (Film) -> Unit = {},
+    openDetailScreen: (Int) -> Unit = {},
     films: List<Film>
 ) {
         Scaffold { paddingValues ->
@@ -78,7 +78,7 @@ fun DiscoverScreen(
 @Composable
 fun Discover(
     films: List<Film>,
-    openDetailScreen: (Film) -> Unit,
+    openDetailScreen: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var query by remember { mutableStateOf("") }
@@ -92,7 +92,7 @@ fun Discover(
             films
         } else {
             films.filter { film ->
-                film.film.contains(query, ignoreCase = true) // используем поле film из data class
+                film.title.contains(query, ignoreCase = true)
             }
         }
     }
@@ -249,7 +249,7 @@ fun RouletteCinema(
 @Composable
 private fun Content(
     films: List<Film>,
-    openDetailScreen: (Film) -> Unit
+    openDetailScreen: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -261,7 +261,7 @@ private fun Content(
         items(films) { film ->
             Cinema(
                 film = film,
-                onClick = { openDetailScreen(film) }
+                onClick = { openDetailScreen(film.id) }
             )
         }
     }
