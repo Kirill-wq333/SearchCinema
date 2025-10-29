@@ -7,9 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.searchcinema.ui.presintation.NavigationHost
-import com.example.searchcinema.ui.presintation.feature.discover.ui.DiscoverScreen
 import com.example.searchcinema.ui.presintation.theme.SearchCinemaTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var navController: NavHostController? = null

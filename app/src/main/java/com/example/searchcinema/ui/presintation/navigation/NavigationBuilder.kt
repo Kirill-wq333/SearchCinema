@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.searchcinema.ui.presintation.approuts.AppRouts
 import com.example.searchcinema.ui.presintation.feature.discover.ui.Discover
 import com.example.searchcinema.ui.presintation.feature.discover.ui.DiscoverScreen
+import com.example.searchcinema.ui.presintation.feature.discover.viewmodel.DiscoverViewModel
 import com.example.searchcinema.ui.presintation.mock.Mock
 
 @Composable
@@ -26,15 +28,17 @@ fun NavigationBuilder(
     ) {
 
         composable(route = AppRouts.DISCOVER) {
+            val vmDiscover = hiltViewModel<DiscoverViewModel>()
+
             DiscoverScreen(
-                films = Mock.demoFilms,
+                vm = vmDiscover,
                 openDetailScreen = { id ->
                     navController.navigate("${AppRouts.DETAIL}/${id}")
                 }
             )
         }
 
-        composable(route = AppRouts.DETAIL) { backStackEntry ->
+        composable(route = "${AppRouts.DETAIL}/${id}") { backStackEntry ->
             val movieId = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
 
         }

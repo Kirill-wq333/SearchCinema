@@ -1,5 +1,6 @@
 package com.example.searchcinema.ui.presintation.feature.discover.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,8 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.domain.ui.presintashion.feature.discover.model.Film
 import com.example.searchcinema.R
+import com.example.searchcinema.ui.presintation.feature.discover.viewmodel.DiscoverViewModel
 import com.example.searchcinema.ui.presintation.shared.discover.Cinema
 import com.example.searchcinema.ui.presintation.shared.discover.Roulette
 import com.example.searchcinema.ui.presintation.theme.Colors
@@ -56,30 +60,29 @@ import kotlinx.coroutines.launch
 @Composable
 private fun DiscoverScreenPreview() {
     SearchCinemaTheme {
-        DiscoverScreen(films = listOf())
+        DiscoverScreen()
     }
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun DiscoverScreen(
     openDetailScreen: (Int) -> Unit = {},
-    films: List<Film>
+    vm: DiscoverViewModel = hiltViewModel()
 ) {
-        Scaffold { paddingValues ->
+    val film by vm.film.collectAsState()
+    val state = vm.state.collectAsState()
+
         Discover(
-            modifier = Modifier
-                .padding(paddingValues),
             openDetailScreen = openDetailScreen,
-            films = films
+            films = film
         )
-    }
 }
 
 @Composable
 fun Discover(
     films: List<Film>,
     openDetailScreen: (Int) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     var query by remember { mutableStateOf("") }
     val cinemas = remember { listOf("Фильмы", "Сериалы", "Документальные", "Спортивные") }
@@ -98,7 +101,7 @@ fun Discover(
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Colors.backColor),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -185,6 +188,8 @@ private fun Search(
                     tint = Color.White
                 )
             },
+            maxLines = 1,
+            textStyle = SCTypography.bodySmall,
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.White,
                 cursorColor = Color.White,

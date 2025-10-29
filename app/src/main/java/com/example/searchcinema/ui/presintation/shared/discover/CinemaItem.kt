@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +39,7 @@ fun Cinema(
     CinemaItem(
         cinema = film.title,
         date = parts[0],
-        image = film.pictureUrl,
+        image = film.pictureLink,
         onClick = onClick
     )
 }
@@ -62,7 +61,7 @@ fun CinemaItem(
     ) {
         Box(
             modifier = Modifier
-                .heightIn(160.dp, 185.dp)
+                .height( 185.dp)
                 .width(154.dp)
                 .background(gradient, RoundedCornerShape(20.dp))
         ) {
@@ -72,7 +71,9 @@ fun CinemaItem(
                 error = painterResource(R.drawable.placeholder),
                 placeholder = painterResource(R.drawable.placeholder),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                modifier = Modifier
+                    .matchParentSize()
+                    .clip(RoundedCornerShape(20.dp))
             )
         }
         Spacer(modifier = Modifier.height(MaterialTheme.spacers.small))
