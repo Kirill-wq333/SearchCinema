@@ -18,6 +18,7 @@ object Colors {
     val veryLightRed = Color(0xFFFF8F71)
     val lightRed = Color(0xFFEF2D1A)
 
+    val jewel = Color(0xFFF96841)
     val gray = Color(0xFFBCBCBC)
     val jaguar = Color(0xFF211F30)
     val white = Color(0xFFE2E2E2)

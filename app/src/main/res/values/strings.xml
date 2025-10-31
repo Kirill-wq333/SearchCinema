@@ -2,4 +2,10 @@
     <string name="app_name">SearchCinema</string>
     <string name="movie_film">MovieSearch</string>
     <string name="finded">Найдено: %1$s</string>
+    <string name="error_loading_data">Ошибка загрузки данных</string>
+    <string name="refresh">Обновить</string>
+    <string name="genre">Жанр</string>
+    <string name="description">Суть сюжета</string>
+    <string name="released_date">Дата выхода</string>
+    <string name="not_found">По вашему запросу ничего не найдено</string>
 </resources>

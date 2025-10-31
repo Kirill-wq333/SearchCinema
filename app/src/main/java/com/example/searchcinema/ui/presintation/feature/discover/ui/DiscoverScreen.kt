@@ -2,8 +2,10 @@ package com.example.searchcinema.ui.presintation.feature.discover.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -22,6 +25,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -39,29 +44,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.domain.ui.presintashion.feature.discover.model.Film
 import com.example.searchcinema.R
+import com.example.searchcinema.ui.presintation.feature.discover.viewmodel.DiscoverContract
 import com.example.searchcinema.ui.presintation.feature.discover.viewmodel.DiscoverViewModel
 import com.example.searchcinema.ui.presintation.shared.discover.Cinema
 import com.example.searchcinema.ui.presintation.shared.discover.Roulette
+import com.example.searchcinema.ui.presintation.shared.screens.ErrorScreen
+import com.example.searchcinema.ui.presintation.shared.screens.IconAndText
+import com.example.searchcinema.ui.presintation.shared.screens.LoadingScreen
 import com.example.searchcinema.ui.presintation.theme.Colors
 import com.example.searchcinema.ui.presintation.theme.SCTypography
 import com.example.searchcinema.ui.presintation.theme.SearchCinemaTheme
 import com.example.searchcinema.ui.presintation.theme.spacers
+import com.example.searchcinema.ui.presintation.utils.sdkutil.Connectivity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.Callback
 
-@Preview
-@Composable
-private fun DiscoverScreenPreview() {
-    SearchCinemaTheme {
-        DiscoverScreen()
-    }
+
+private interface DiscoverScreenCallBack {
+    fun refresh() {}
 }
 
 @SuppressLint("SuspiciousIndentation")
@@ -70,17 +82,45 @@ fun DiscoverScreen(
     openDetailScreen: (Int) -> Unit = {},
     vm: DiscoverViewModel = hiltViewModel()
 ) {
-    val film by vm.film.collectAsState()
-    val state = vm.state.collectAsState()
+    val context = LocalContext.current
 
-        Discover(
-            openDetailScreen = openDetailScreen,
-            films = film
-        )
+    val films by vm.film.collectAsState()
+    val state by vm.state.collectAsState()
+
+    LaunchedEffect(state) {
+        if (state is DiscoverContract.State.Loading) {
+            vm.handleEvent(DiscoverContract.Event.FetchContent)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        while(true) {
+            delay(1000)
+            if (!Connectivity.hasInternetConnection(context)) {
+                vm.handleEvent(DiscoverContract.Event.EnableNoInternetConnectionState)
+            }
+        }
+    }
+
+    val callback = object: DiscoverScreenCallBack{
+        override fun refresh() {
+            vm.handleEvent(DiscoverContract.Event.Refresh)
+        }
+    }
+
+    Discover(
+        openDetailScreen = openDetailScreen,
+        films = films,
+        state = state,
+        callback = callback
+    )
 }
 
+
 @Composable
-fun Discover(
+private fun Discover(
+    callback: DiscoverScreenCallBack,
+    state: DiscoverContract.State,
     films: List<Film>,
     openDetailScreen: (Int) -> Unit,
 ) {
@@ -113,54 +153,79 @@ fun Discover(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 34.dp)
         )
-        Spacer(modifier = Modifier.height(26.dp))
-        SearchAndRouletteCinema(
-            cinemas = cinemas,
-            query = query,
-            selectedTab = selectedTab,
-            pagerState = pagerState,
-            coroutine = coroutineScope,
-            onQueryChanges = { query = it },
-            foundCount = filteredFilms.size
-        )
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f)
-        ) {
-            Content(
-                films = filteredFilms,
-                openDetailScreen = openDetailScreen
-            )
+        when(state) {
+            is DiscoverContract.State.Loaded -> {
+                DiscoverContent(
+                    cinemas = cinemas,
+                    query = query,
+                    coroutineScope = coroutineScope,
+                    onQueryChanges = { query = it },
+                    filteredFilms = filteredFilms,
+                    selectedTab = selectedTab,
+                    pagerState = pagerState,
+                    openDetailScreen = openDetailScreen
+                )
+            }
+            is DiscoverContract.State.NoInternetConnection -> {
+                ErrorScreen(
+                    onRefresh = callback::refresh
+                )
+            }
+            is DiscoverContract.State.Loading ->{
+                LoadingScreen()
+            }
         }
     }
+
 }
 
 @Composable
-fun SearchAndRouletteCinema(
+fun DiscoverContent(
     cinemas: List<String>,
     query: String,
+    coroutineScope: CoroutineScope,
+    onQueryChanges: (String) -> Unit,
+    filteredFilms: List<Film>,
     selectedTab: Int,
     pagerState: PagerState,
-    onQueryChanges: (String) -> Unit,
-    foundCount: Int,
-    coroutine: CoroutineScope
+    openDetailScreen: (Int) -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(start = 24.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
+    Column {
+        Spacer(modifier = Modifier.height(26.dp))
         Search(
             query = query,
             onValueChanges = onQueryChanges,
-            foundCount = foundCount
-            )
-        Spacer(modifier = Modifier.height(23.dp))
-        RouletteCinema(
-            cinemas = cinemas,
-            onSelectedTab = { selectedTab == it},
-            pagerState = pagerState,
-            coroutine = coroutine
+            foundCount = filteredFilms.size
         )
+        Spacer(modifier = Modifier.height(23.dp))
+        if (filteredFilms.isEmpty() && query.isNotBlank()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                IconAndText(
+                    text = R.string.not_found,
+                    icon = R.drawable.not_found,
+                    spacer = 36.dp
+                )
+            }
+        } else {
+            RouletteCinema(
+                cinemas = cinemas,
+                onSelectedTab = { selectedTab == it },
+                pagerState = pagerState,
+                coroutine = coroutineScope
+            )
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Content(
+                    films = filteredFilms,
+                    openDetailScreen = openDetailScreen
+                )
+            }
+        }
     }
 }
 
@@ -171,7 +236,7 @@ private fun Search(
     foundCount: Int
 ) {
     Column(
-        horizontalAlignment = Alignment.Start
+        modifier = Modifier.padding(start = 24.dp),
     ) {
         TextField(
             modifier = Modifier
@@ -186,6 +251,13 @@ private fun Search(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
                     tint = Color.White
+                )
+            },
+            placeholder = {
+                Text(
+                    text = "Шерлок Холмс",
+                    color = Colors.gray,
+                    style = SCTypography.bodySmall
                 )
             },
             maxLines = 1,
@@ -223,6 +295,7 @@ fun RouletteCinema(
 ) {
     Row(
         modifier = Modifier
+            .padding(start = 24.dp)
             .horizontalScroll(rememberScrollState())
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

@@ -9,13 +9,11 @@ object DiscoverContract {
         data object FetchContent: Event
         data object Refresh: Event
         data object EnableNoInternetConnectionState: Event
-        data object SearchNotFound: Event
     }
 
     sealed interface State : ViewState{
         data object Loaded: State
         data object Loading: State
         data object NoInternetConnection: State
-        data object NotFound: State
     }
 }

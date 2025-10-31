@@ -32,6 +32,12 @@ val SCTypography: Typography
             fontFamily = lato,
             fontWeight = FontWeight.Normal,
         ),
+        titleLarge = TextStyle(
+            fontSize = 22.sp,
+            lineHeight = 36.sp,
+            fontFamily = lato,
+            fontWeight = FontWeight.Normal
+        ),
         titleMedium = TextStyle(
             fontSize = 12.sp,
             fontFamily = lato,
