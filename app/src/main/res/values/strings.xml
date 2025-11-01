@@ -5,7 +5,10 @@
     <string name="error_loading_data">Ошибка загрузки данных</string>
     <string name="refresh">Обновить</string>
     <string name="genre">Жанр</string>
+    <string name="related_movies">Похожие Фильмы</string>
+    <string name="released_date">%1$s %2$s, %3$s г</string>
+    <string name="next_read">Читать далее…</string>
     <string name="description">Суть сюжета</string>
-    <string name="released_date">Дата выхода</string>
+    <string name="released_date_heading">Дата выхода</string>
     <string name="not_found">По вашему запросу ничего не найдено</string>
 </resources>

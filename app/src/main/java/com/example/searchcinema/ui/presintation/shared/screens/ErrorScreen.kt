@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.searchcinema.R
@@ -37,7 +38,10 @@ fun ErrorScreen(
         IconAndText(
             text = R.string.error_loading_data,
             icon = R.drawable.error_loading_data,
+            style = SCTypography.titleLarge,
             spacer = 22.dp,
+            width = 128.dp,
+            height = 113.dp,
             content = {
                 Spacer(modifier = Modifier.height(51.dp))
                 Box(
@@ -61,8 +65,11 @@ fun ErrorScreen(
 fun IconAndText(
     content: @Composable () -> Unit = {},
     spacer: Dp,
+    width: Dp,
+    height: Dp,
     text: Int,
-    icon: Int
+    icon: Int,
+    style: TextStyle
 ) {
     Column(
         verticalArrangement = Arrangement.Top,
@@ -71,13 +78,13 @@ fun IconAndText(
         Icon(
             imageVector = ImageVector.vectorResource(icon),
             contentDescription = null,
-            modifier = Modifier.size(128.dp, 113.dp)
+            modifier = Modifier.size(width, height)
         )
         Spacer(modifier = Modifier.height(spacer))
         Text(
             text = stringResource(text),
             color = Color.White,
-            style = SCTypography.titleLarge
+            style = style
         )
         content()
     }

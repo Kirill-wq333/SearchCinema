@@ -1,6 +1,9 @@
 package com.example.searchcinema.di
 
+import com.example.data.ui.presintashion.feature.detail.datasource.DetailApiService
 import com.example.data.ui.presintashion.feature.discover.datasource.DiscoverApiService
+import com.example.domain.ui.presintashion.feature.detail.interactot.DetailInteractor
+import com.example.domain.ui.presintashion.feature.detail.repository.DetailRepository
 import com.example.domain.ui.presintashion.feature.discover.interactor.DiscoverInteractor
 import com.example.domain.ui.presintashion.feature.discover.repository.DiscoverRepository
 import dagger.Module
@@ -44,7 +47,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideDetailApiService(retrofit: Retrofit): DetailApiService {
+        return retrofit.create(DetailApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideDiscoverInteractor(repository: DiscoverRepository): DiscoverInteractor {
         return DiscoverInteractor(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDetailInteractor(repository: DetailRepository): DetailInteractor {
+        return DetailInteractor(repository)
     }
 }

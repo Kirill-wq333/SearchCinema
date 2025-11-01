@@ -19,8 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.domain.ui.presintashion.feature.discover.model.Film
@@ -32,7 +34,10 @@ import com.example.searchcinema.ui.presintation.theme.spacers
 @Composable
 fun Cinema(
     film: Film,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    height: Dp = 185.dp,
+    width: Dp = 154.dp,
+    style: TextStyle = SCTypography.bodyMedium,
 ) {
     val parts = film.releaseDate.split("-")
 
@@ -40,7 +45,10 @@ fun Cinema(
         cinema = film.title,
         date = parts[0],
         image = film.pictureLink,
-        onClick = onClick
+        onClick = onClick,
+        width = width,
+        height = height,
+        style = style
     )
 }
 
@@ -48,6 +56,9 @@ fun Cinema(
 fun CinemaItem(
     cinema: String,
     image: String,
+    height: Dp,
+    width: Dp,
+    style: TextStyle,
     onClick: () -> Unit,
     date: String
 ) {
@@ -61,8 +72,8 @@ fun CinemaItem(
     ) {
         Box(
             modifier = Modifier
-                .height( 185.dp)
-                .width(154.dp)
+                .height(height = height)
+                .width(width = width)
                 .background(gradient, RoundedCornerShape(20.dp))
         ) {
             AsyncImage(
@@ -88,7 +99,9 @@ fun CinemaItem(
                 }
             },
             color = Color.White,
-            style = SCTypography.bodyMedium
+            style = style,
+            maxLines = 3,
+            modifier = Modifier.width(width)
         )
     }
 }

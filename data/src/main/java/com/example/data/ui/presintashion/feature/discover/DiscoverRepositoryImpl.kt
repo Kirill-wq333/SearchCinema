@@ -10,6 +10,6 @@ class DiscoverRepositoryImpl @Inject constructor(
     private val apiService: DiscoverApiService
 ): DiscoverRepository {
     override suspend fun getDiscover(): List<Film> =
-        apiService.getDiscover().map { it.toFilm() }
+        apiService.getFilm().map { it.toFilm() }
 
 }

@@ -33,10 +33,10 @@ import kotlin.math.abs
 
 @Preview
 @Composable
-private fun CinemaItemPreview() {
-    Roulette(
-        cinema = "Ghbdnt",
-        clickCinema = {},
+private fun GenreItemPreview() {
+    Genre(
+        genre = "Ghbdnt",
+        clickGenre = {},
         isSelected = false,
         offset = 0.1f,
         startOffset = 1f,
@@ -45,18 +45,18 @@ private fun CinemaItemPreview() {
 }
 
 @Composable
-fun Roulette(
-    cinema: String,
+fun Genre(
+    genre: String,
     isSelected: Boolean,
-    clickCinema: () -> Unit,
+    clickGenre: () -> Unit,
     offset: Float,
     startOffset: Float,
     endOffset: Float
 ) {
-    RouletteItem(
-        cinema = cinema,
+    GenreItem(
+        genre = genre,
         isSelected = isSelected,
-        clickCinema = clickCinema,
+        clickGenre = clickGenre,
         offset = offset,
         startOffset = startOffset,
         endOffset = endOffset
@@ -64,10 +64,10 @@ fun Roulette(
 }
 
 @Composable
-fun RouletteItem(
-    cinema: String,
+fun GenreItem(
+    genre: String,
     isSelected: Boolean,
-    clickCinema: () -> Unit,
+    clickGenre: () -> Unit,
     offset: Float,
     startOffset: Float,
     endOffset: Float
@@ -102,7 +102,7 @@ fun RouletteItem(
 
     Column(
         modifier = Modifier
-            .clickable(onClick = clickCinema)
+            .clickable(onClick = clickGenre)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
@@ -110,7 +110,7 @@ fun RouletteItem(
             }
     ) {
         Text(
-            text = cinema,
+            text = genre,
             style = TextStyle(
                 brush = color,
                 fontSize = 16.sp,

@@ -12,13 +12,18 @@ import com.example.searchcinema.R
 private val lato = FontFamily(Font(R.font.lato_regular, FontWeight.Normal))
 
 
-val SCTypography: Typography
+val     SCTypography: Typography
     @Composable
     get() = Typography(
         bodyLarge = TextStyle(
             fontSize = 24.sp,
             fontFamily = lato,
             lineHeight = 36.sp,
+            fontWeight = FontWeight.Normal
+        ),
+        labelLarge = TextStyle(
+            fontSize = 20.sp,
+            fontFamily = lato,
             fontWeight = FontWeight.Normal
         ),
         bodyMedium = TextStyle(

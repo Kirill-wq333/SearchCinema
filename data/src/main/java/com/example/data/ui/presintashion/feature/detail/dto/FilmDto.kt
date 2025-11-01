@@ -1,4 +1,4 @@
-package com.example.data.ui.presintashion.feature.discover.dto
+package com.example.data.ui.presintashion.feature.detail.dto
 
 import com.example.domain.ui.presintashion.feature.discover.model.Film
 

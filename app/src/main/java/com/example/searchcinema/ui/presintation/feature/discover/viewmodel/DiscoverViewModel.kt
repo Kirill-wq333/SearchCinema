@@ -19,8 +19,8 @@ import javax.inject.Inject
 class DiscoverViewModel @Inject constructor(
     private val interactor: DiscoverInteractor
 ): BaseViewModel<DiscoverContract.Event, DiscoverContract.State, Nothing>() {
-    private val _film: MutableStateFlow<List<Film>> = MutableStateFlow(listOf())
-    val film = _film.asStateFlow()
+    private val _films: MutableStateFlow<List<Film>> = MutableStateFlow(listOf())
+    val films = _films.asStateFlow()
 
     override fun setInitialState(): DiscoverContract.State = DiscoverContract.State.Loading
 
@@ -39,7 +39,7 @@ class DiscoverViewModel @Inject constructor(
             try {
                 withTimeout(10000) {
                     val films = interactor.getDiscover()
-                    _film.value = films
+                    _films.value = films
                     updateState { DiscoverContract.State.Loaded }
                 }
             } catch (e: TimeoutCancellationException) {
