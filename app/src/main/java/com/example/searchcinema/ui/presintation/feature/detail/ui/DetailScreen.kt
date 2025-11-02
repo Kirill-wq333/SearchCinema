@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -123,6 +124,7 @@ private fun Detail(
                     year = parts[0],
                     month = parts[1].toMonthName(),
                     day = parts[2],
+                    currentFilmId = film.id
                 )
             }
             is DetailContract.State.Loading -> {
@@ -166,6 +168,7 @@ private fun DetailContent(
     quality: String,
     rating: Number,
     duration: Int,
+    currentFilmId: Int,
     genre: List<String>,
     year: String,
     month: String,
@@ -188,7 +191,8 @@ private fun DetailContent(
             description = description,
             day = day,
             month = month,
-            year = year
+            year = year,
+            currentFilmId = currentFilmId
         )
     }
 }
@@ -197,6 +201,7 @@ private fun DetailContent(
 private fun Content(
     genre: List<String>,
     films: List<Film>,
+    currentFilmId: Int,
     callback: DetailScreenCallback,
     year: String,
     nameFilm: String,
@@ -233,7 +238,8 @@ private fun Content(
         Spacer(modifier = Modifier.height(20.dp))
         RelatedFilms(
             films = films,
-            openRelatedFilm = callback::openRelatedFilm
+            openRelatedFilm = callback::openRelatedFilm,
+            currentFilmId = currentFilmId
         )
     }
 }
@@ -271,11 +277,17 @@ fun Main(
     }
 
     Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = nameFilm,
                 color = Color.White,
-                style = SCTypography.bodyLarge
+                style = SCTypography.bodyLarge,
+                maxLines = 3,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .widthIn(max = 260.dp)
             )
             Spacer(modifier = Modifier.width(18.dp))
             GradientBox(
@@ -445,12 +457,14 @@ fun Description(
 @Composable
 fun RelatedFilms(
     films: List<Film>,
+    currentFilmId: Int,
     openRelatedFilm: (Int) -> Unit
 ) {
-    val relatedFilms = remember(films, films.map { it.genre }) {
-        films.filter { film ->
-            film.genre.any { genre -> films.map { it.genre }.contains<Any>(genre) }
-        }
+
+    val relatedFilms = remember(films, currentFilmId) {
+        films
+            .filter { it.id != currentFilmId }
+            .shuffled()
     }
 
     Column(
@@ -467,7 +481,7 @@ fun RelatedFilms(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(films) { film ->
+            items(relatedFilms) { film ->
                 Cinema(
                     film = film,
                     onClick = { openRelatedFilm(film.id) },
