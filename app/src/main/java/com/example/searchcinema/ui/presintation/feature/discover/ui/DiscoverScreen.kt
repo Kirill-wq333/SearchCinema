@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -307,15 +310,21 @@ fun RouletteGenre(
     pagerState: PagerState,
     coroutine: CoroutineScope,
 ) {
-    Row(
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(pagerState.currentPage) {
+        lazyListState.animateScrollToItem(pagerState.currentPage)
+    }
+
+    LazyRow(
         modifier = Modifier
             .padding(start = 24.dp)
-            .horizontalScroll(rememberScrollState())
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(13.dp)
+        state = lazyListState,
+        horizontalArrangement = Arrangement.spacedBy(13.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        genres.forEachIndexed { index, genre ->
+        itemsIndexed(genres) { index, genre ->
 
             val offset = pagerState.offsetForPage(index)
             val startOffset = pagerState.startOffsetForPage(index)
