@@ -1,4 +1,4 @@
-package com.example.domain.ui.presintashion.feature.discover.model
+package com.example.domain.ui.presintashion.feature
 
 import kotlinx.serialization.Serializable
 
@@ -14,5 +14,3 @@ data class Film(
     val quality: String,
     val releaseDate: String,
 )
-
-

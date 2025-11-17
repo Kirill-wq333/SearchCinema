@@ -1,6 +1,6 @@
 package com.example.searchcinema.ui.presintation.mock
 
-import com.example.domain.ui.presintashion.feature.discover.model.Film
+import com.example.domain.ui.presintashion.feature.Film
 
 object Mock {
     val demoFilms = listOf(

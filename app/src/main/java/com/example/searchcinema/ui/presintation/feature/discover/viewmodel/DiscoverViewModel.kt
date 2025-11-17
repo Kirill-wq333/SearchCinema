@@ -1,8 +1,8 @@
 package com.example.searchcinema.ui.presintation.feature.discover.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.example.domain.ui.presintashion.feature.Film
 import com.example.domain.ui.presintashion.feature.discover.interactor.DiscoverInteractor
-import com.example.domain.ui.presintashion.feature.discover.model.Film
 import com.example.searchcinema.core.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.TimeoutCancellationException

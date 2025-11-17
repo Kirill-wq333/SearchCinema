@@ -1,3 +1,4 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin.android)
@@ -35,45 +36,34 @@ android {
     buildFeatures {
         compose = true
     }
+
+    composeOptions{
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
 }
 
 dependencies {
 
-    implementation (libs.hilt.android)
-    kapt (libs.hilt.compiler)
+    implementation(project(":domain"))
 
-    // Для поддержки ViewModel с Hilt
-    implementation (libs.androidx.hilt.navigation.compose)
-    kapt (libs.androidx.hilt.compiler)
-
-    implementation (libs.androidx.lifecycle.viewmodel.ktx)
-
-    // Retrofit
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.logging.interceptor)
-
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
-
-    // Для корутин
-    implementation (libs.kotlinx.coroutines.android)
+    implementation(kotlin("reflect"))
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.kotlinx.serialization.json)
 
-    implementation(project(":domain"))
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.dataStore)
+    kapt(libs.room.compiler)
+
+    implementation(libs.androidx.compose.runtime)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.domain.ui.presintashion.feature.discover.model.Film
+import com.example.domain.ui.presintashion.feature.Film
 import com.example.searchcinema.R
 import com.example.searchcinema.ui.presintation.theme.Colors
 import com.example.searchcinema.ui.presintation.theme.SCTypography

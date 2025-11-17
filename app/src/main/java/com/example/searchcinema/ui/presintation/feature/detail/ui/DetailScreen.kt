@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -43,14 +42,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.domain.ui.presintashion.feature.discover.model.Film
+import com.example.domain.ui.presintashion.feature.Film
 import com.example.searchcinema.R
-import com.example.searchcinema.ui.presintation.feature.detail.viewmodel.DetailContract
 import com.example.searchcinema.ui.presintation.feature.detail.viewmodel.DetailViewModel
 import com.example.searchcinema.ui.presintation.shared.detail.GradientBox
 import com.example.searchcinema.ui.presintation.shared.discover.Cinema
-import com.example.searchcinema.ui.presintation.shared.screens.ErrorScreen
-import com.example.searchcinema.ui.presintation.shared.screens.LoadingScreen
 import com.example.searchcinema.ui.presintation.theme.Colors
 import com.example.searchcinema.ui.presintation.theme.SCTypography
 import com.example.searchcinema.ui.presintation.theme.spacers
@@ -58,7 +54,6 @@ import java.util.Calendar
 import java.util.Locale
 
 private interface DetailScreenCallback{
-    fun refresh() {}
     fun openRelatedFilm(id: Int) {}
 }
 
@@ -70,72 +65,62 @@ fun DetailScreen(
 ) {
     val films by vm.films.collectAsState()
     val film by vm.film.collectAsState()
-    val state by vm.state.collectAsState()
 
-    val callback = object: DetailScreenCallback {
-        override fun refresh() {
-            vm.handleEvent(DetailContract.Event.Refresh)
-        }
-
+    val callback = object : DetailScreenCallback {
         override fun openRelatedFilm(id: Int) = openRelatedFilm(id)
     }
 
-    film?.let { item ->
-        Detail(
-            film = item,
-            films = films,
-            state = state,
-            onBack = onBack,
-            callback = callback
-        )
-    }
+    Detail(
+        film = film,
+        films = films,
+        onBack = onBack,
+        callback = callback,
+        vm = vm
+    )
 }
 
 @Composable
 private fun Detail(
-    film: Film,
-    state: DetailContract.State,
+    vm: DetailViewModel,
+    film: Film?,
     callback: DetailScreenCallback,
     films: List<Film>,
     onBack: () -> Unit
 ) {
-    val parts = film.releaseDate.split("-")
+
     Scaffold(
         topBar = {
             TopBar(onBack = onBack)
         }
     ) { paddingValues ->
-        when(state) {
-            is DetailContract.State.Loaded -> {
-                DetailContent(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = Colors.backColor)
-                        .padding(paddingValues),
-                    films = films,
-                    callback = callback,
-                    image = film.pictureLink,
-                    nameFilm = film.title,
-                    quality = film.quality,
-                    rating = film.rating,
-                    duration = film.duration,
-                    genre = film.genre,
-                    description = film.description,
-                    year = parts[0],
-                    month = parts[1].toMonthName(),
-                    day = parts[2],
-                    currentFilmId = film.id
-                )
-            }
-            is DetailContract.State.Loading -> {
-                LoadingScreen()
-            }
-            is DetailContract.State.NoInternetConnection -> {
-                ErrorScreen(onRefresh = callback::refresh)
-            }
+
+        film?.let { itemFilm ->
+
+            val parts = itemFilm.releaseDate.split("-")
+
+            DetailContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Colors.backColor)
+                    .padding(paddingValues),
+                films = films,
+                callback = callback,
+                image = itemFilm.pictureLink,
+                nameFilm = itemFilm.title,
+                quality = itemFilm.quality,
+                rating = itemFilm.rating,
+                duration = itemFilm.duration,
+                genre = itemFilm.genre,
+                description = itemFilm.description,
+                year = parts[0],
+                month = parts[1].toMonthName(),
+                day = parts[2],
+            )
         }
     }
+
 }
+
 
 
 @Composable
@@ -168,7 +153,6 @@ private fun DetailContent(
     quality: String,
     rating: Number,
     duration: Int,
-    currentFilmId: Int,
     genre: List<String>,
     year: String,
     month: String,
@@ -192,7 +176,6 @@ private fun DetailContent(
             day = day,
             month = month,
             year = year,
-            currentFilmId = currentFilmId
         )
     }
 }
@@ -201,7 +184,6 @@ private fun DetailContent(
 private fun Content(
     genre: List<String>,
     films: List<Film>,
-    currentFilmId: Int,
     callback: DetailScreenCallback,
     year: String,
     nameFilm: String,
@@ -239,7 +221,6 @@ private fun Content(
         RelatedFilms(
             films = films,
             openRelatedFilm = callback::openRelatedFilm,
-            currentFilmId = currentFilmId
         )
     }
 }
@@ -457,15 +438,8 @@ fun Description(
 @Composable
 fun RelatedFilms(
     films: List<Film>,
-    currentFilmId: Int,
     openRelatedFilm: (Int) -> Unit
 ) {
-
-    val relatedFilms = remember(films, currentFilmId) {
-        films
-            .filter { it.id != currentFilmId }
-            .shuffled()
-    }
 
     Column(
         horizontalAlignment = Alignment.Start
@@ -481,7 +455,7 @@ fun RelatedFilms(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(relatedFilms) { film ->
+            items(films) { film ->
                 Cinema(
                     film = film,
                     onClick = { openRelatedFilm(film.id) },
